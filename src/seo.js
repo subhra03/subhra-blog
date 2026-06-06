@@ -2,24 +2,24 @@ import { findCategoryById } from "./data/siteData.js";
 import { allTags, findPostBySlug } from "./data/posts.js";
 import { getBasePath, parseRoute } from "./routes.js";
 
-const siteName = "Cosmic Blog";
+const siteName = "Thoughts & Notes";
 const defaultDescription =
   "Explore thoughtful articles on technology, science, environment, literature, and culture.";
 const defaultImage = "/assets/logo.png";
 
 const pageTitles = {
-  home: "Cosmic Blog",
-  articles: "Articles | Cosmic Blog",
-  categories: "Categories | Cosmic Blog",
-  about: "About | Cosmic Blog",
-  notFound: "Not Found | Cosmic Blog",
+  home: "Thoughts & Notes",
+  articles: "Articles | Thoughts & Notes",
+  categories: "Categories | Thoughts & Notes",
+  about: "About | Thoughts & Notes",
+  notFound: "Not Found | Thoughts & Notes",
 };
 
 const pageDescriptions = {
   home: defaultDescription,
-  articles: "Browse every Cosmic Blog article, filter by category, and search by topic or author.",
-  categories: "Explore Cosmic Blog categories across technology, science, environment, literature, and culture.",
-  about: "Learn about Cosmic Blog, the topics it covers, and the thinking behind the writing.",
+  articles: "Browse every Thoughts & Notes article, filter by category, and search by topic or author.",
+  categories: "Explore Thoughts & Notes categories across technology, science, environment, literature, and culture.",
+  about: "Learn about Thoughts & Notes, the topics it covers, and the thinking behind the writing.",
   notFound: "The page you are looking for does not exist or has moved.",
 };
 
@@ -64,7 +64,7 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
 
   if (post) {
     return createSeo({
-      title: `${post.title} | Cosmic Blog`,
+      title: `${post.title} | Thoughts & Notes`,
       description: post.excerpt,
       path: post.path,
       image: post.image,
@@ -75,8 +75,8 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
   }
 
   if (route.page === "category" && category) {
-    const title = `${category.title} Articles | Cosmic Blog`;
-    const description = `Browse Cosmic Blog articles about ${category.title}.`;
+    const title = `${category.title} Articles | Thoughts & Notes`;
+    const description = `Browse Thoughts & Notes articles about ${category.title}.`;
 
     return createSeo({
       title,
@@ -88,8 +88,8 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
   }
 
   if (route.page === "tag" && tagExists) {
-    const title = `#${route.tag} Articles | Cosmic Blog`;
-    const description = `Browse Cosmic Blog articles tagged with #${route.tag}.`;
+    const title = `#${route.tag} Articles | Thoughts & Notes`;
+    const description = `Browse Thoughts & Notes articles tagged with #${route.tag}.`;
 
     return createSeo({
       title,

@@ -23,7 +23,7 @@ export function Navigation({
                 onClick={(event) => handleNavigate(event, "/", onNavigate)}
                 aria-label="Go to home"
               >
-                <img src={toPublicPath("/assets/logo.png")} alt="Cosmic Blog Logo" className="h-8" />
+                <img src={toPublicPath("/assets/logo.png")} alt="Thoughts & Notes Logo" className="h-8" />
               </a>
             </div>
             <div className="hidden md:flex items-center space-x-8">

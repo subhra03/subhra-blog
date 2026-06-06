@@ -34,7 +34,7 @@ export function Footer({ currentPage, onNavigate }) {
               className="text-2xl font-bold gradient-text mb-4 inline-block"
               onClick={(event) => handleNavigate(event, "/", onNavigate)}
             >
-              Cosmic
+              Thoughts & Notes
             </a>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Exploring ideas that shape our world and beyond.
@@ -87,7 +87,7 @@ export function Footer({ currentPage, onNavigate }) {
           ))}
         </div>
         <div className="border-t border-gray-200 dark:border-slate-700 mt-12 pt-8 text-center text-gray-500 dark:text-gray-400">
-          <p>&copy; 2023 Cosmic Blog. All rights reserved.</p>
+          <p>&copy; 2023 Thoughts & Notes. All rights reserved.</p>
         </div>
       </div>
     </footer>

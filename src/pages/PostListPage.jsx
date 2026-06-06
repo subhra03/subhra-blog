@@ -11,7 +11,7 @@ export function CategoryPostsPage({ categoryId, posts, onNavigate }) {
     <PostListLayout
       eyebrow="Category"
       title={title}
-      description={`Browse every Cosmic Blog article filed under ${title}.`}
+      description={`Browse every Thoughts & Notes article filed under ${title}.`}
       posts={posts}
       emptyText={`No articles are currently published in ${title}.`}
       onNavigate={onNavigate}
@@ -24,7 +24,7 @@ export function TagPostsPage({ tag, posts, onNavigate }) {
     <PostListLayout
       eyebrow="Tag"
       title={`#${tag}`}
-      description={`Browse every Cosmic Blog article tagged with #${tag}.`}
+      description={`Browse every Thoughts & Notes article tagged with #${tag}.`}
       posts={posts}
       emptyText={`No articles are currently tagged with #${tag}.`}
       onNavigate={onNavigate}

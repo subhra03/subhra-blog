@@ -100,7 +100,7 @@ ${categories}
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>Cosmic Blog</title>
+    <title>Thoughts &amp; Notes</title>
     <link>${escapeXml(siteUrl)}</link>
     <description>Thoughtful articles on technology, science, environment, literature, and culture.</description>
     <language>en-us</language>

@@ -147,7 +147,7 @@ export function HomePage({ onNavigate }) {
         className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
       >
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Stay Updated with Cosmic</h2>
+          <h2 className="text-3xl font-bold mb-4">Stay Updated with Thoughts & Notes</h2>
           <p className="text-lg mb-8 opacity-90">
             Subscribe to our newsletter and never miss a new article or update.
           </p>
