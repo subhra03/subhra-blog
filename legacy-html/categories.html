@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories | Cosmic Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        .dark-mode {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .category-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .category-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        .category-icon {
+            transition: transform 0.5s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        /* Reading progress indicator */
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 100;
+            transition: width 0.1s;
+        }
+
+        /* Back to top button */
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Category colors */
+        .category-technology {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        .category-science {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+        }
+
+        .category-environment {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .category-literature {
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+        }
+
+        .category-philosophy {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+        }
+
+        .category-art {
+            background: linear-gradient(135deg, #f97316, #eab308);
+        }
+
+        /* Featured category */
+        .featured-category {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 1023px) {
+            .featured-category {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body class="dark:dark-mode">
+    <!-- Reading progress indicator -->
+    <div id="reading-progress"></div>
+
+    <!-- Back to top button -->
+    <div id="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold gradient-text">Cosmic</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Home</a>
+                    <a href="articles.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Articles</a>
+                    <a href="categories.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Categories</a>
+                    <a href="about.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">About</a>
+                    <button id="theme-toggle" class="theme-toggle p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 bg-white dark:bg-slate-900 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+            <button id="close-menu" class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Home</a>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Articles</a>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 font-semibold text-indigo-600 dark:text-indigo-400">Categories</a>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">About</a>
+            <button id="theme-toggle-mobile" class="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                <i class="fas fa-moon dark:hidden text-xl"></i>
+                <i class="fas fa-sun hidden dark:block text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <header class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Explore <span class="gradient-text">Categories</span></h1>
+            <p class="text-xl max-w-3xl mx-auto opacity-90">
+                Dive deep into topics that matter most to you. Our categories cover the spectrum of cosmic thought.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Categories Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <!-- Featured Category -->
+                <a href="#" class="category-card featured-category rounded-xl overflow-hidden group">
+                    <div class="relative h-48 md:h-64 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/1200x800/?technology" alt="Technology" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-6">
+                            <div class="w-16 h-16 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 mx-auto group-hover:bg-white/30 transition-colors duration-300">
+                                <i class="fas fa-microchip text-white text-2xl category-icon"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white text-center mb-2">Technology</h3>
+                            <p class="text-white/90 text-center">42 articles</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Regular Categories -->
+                <a href="#" class="category-card rounded-xl overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden category-science">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6">
+                            <div class="w-14 h-14 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                                <i class="fas fa-atom text-white text-xl category-icon"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white text-center mb-2">Science</h3>
+                            <p class="text-white/90 text-center">36 articles</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card rounded-xl overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden category-environment">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6">
+                            <div class="w-14 h-14 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                                <i class="fas fa-leaf text-white text-xl category-icon"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white text-center mb-2">Environment</h3>
+                            <p class="text-white/90 text-center">28 articles</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card rounded-xl overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden category-literature">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6">
+                            <div class="w-14 h-14 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                                <i class="fas fa-book-open text-white text-xl category-icon"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white text-center mb-2">Literature</h3>
+                            <p class="text-white/90 text-center">24 articles</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card rounded-xl overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden category-philosophy">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6">
+                            <div class="w-14 h-14 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                                <i class="fas fa-brain text-white text-xl category-icon"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white text-center mb-2">Philosophy</h3>
+                            <p class="text-white/90 text-center">18 articles</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card rounded-xl overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden category-art">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6">
+                            <div class="w-14 h-14 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                                <i class="fas fa-palette text-white text-xl category-icon"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white text-center mb-2">Art & Culture</h3>
+                            <p class="text-white/90 text-center">15 articles</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Popular Tags -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm mb-12">
+                <h3 class="text-xl font-bold mb-6">Browse by <span class="gradient-text">Tags</span></h3>
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900 hover:text-indigo-800 dark:hover:text-indigo-200 transition-colors">#artificialintelligence</a>
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-800 dark:hover:text-green-200 transition-colors">#sustainability</a>
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-yellow-100 dark:hover:bg-yellow-900 hover:text-yellow-800 dark:hover:text-yellow-200 transition-colors">#spaceexploration</a>
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-purple-100 dark:hover:bg-purple-900 hover:text-purple-800 dark:hover:text-purple-200 transition-colors">#literaryanalysis</a>
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-pink-100 dark:hover:bg-pink-900 hover:text-pink-800 dark:hover:text-pink-200 transition-colors">#philosophy</a>
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-800 dark:hover:text-blue-200 transition-colors">#neuroscience</a>
+                    <a href="#" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-800 dark:hover:text-red-200 transition-colors">#creativity</a>
+                </div>
+            </div>
+
+            <!-- Newsletter CTA -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 md:p-12 text-center text-white mb-12">
+                <h3 class="text-2xl font-bold mb-4">Never Miss an Article</h3>
+                <p class="max-w-2xl mx-auto mb-6 opacity-90">Subscribe to our newsletter and get the latest cosmic thoughts delivered straight to your inbox.</p>
+                <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/30 bg-white/10 backdrop-blur-sm placeholder-white/70">
+                    <button type="submit" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <a href="#" class="text-2xl font-bold gradient-text mb-4 inline-block">Cosmic</a>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Exploring ideas that shape our world and beyond.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Navigation</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Home</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Articles</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 font-semibold text-indigo-600 dark:text-indigo-400">Categories</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Categories</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Technology</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Science</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Environment</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Literature</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 dark:border-slate-700 mt-12 pt-8 text-center text-gray-500 dark:text-gray-400">
+                <p>© 2023 Cosmic Blog. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        const html = document.documentElement;
+
+        // Check for saved user preference or use system preference
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        themeToggleMobile.addEventListener('click', toggleTheme);
+
+        // Mobile menu functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        // Reading progress indicator
+        const readingProgress = document.getElementById('reading-progress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+            readingProgress.style.width = scrollPercentage + '%';
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Category card animations
+        const categoryCards = document.querySelectorAll('.category-card');
+        categoryCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const angleX = (y - centerY) / 20;
+                const angleY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-5px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(-5px)';
+            });
+        });
+    </script>
+</body>
+</html>

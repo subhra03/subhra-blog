@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        .dark-mode {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .tag {
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        .article-image {
+            transition: transform 0.5s ease;
+        }
+
+        .article-image:hover {
+            transform: scale(1.03);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .blog-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.75;
+        }
+
+        .blog-content h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .blog-content img {
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Reading progress indicator */
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 100;
+            transition: width 0.1s;
+        }
+
+        /* Back to top button */
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Comment upvote buttons */
+        .upvote-button {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .upvote-button:hover {
+            color: var(--primary);
+        }
+
+        .upvote-button.active {
+            color: var(--primary);
+        }
+
+        /* Tag cloud */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-cloud .tag {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .tag-cloud .tag:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Search input */
+        .search-input {
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="dark:dark-mode">
+    <!-- Reading progress indicator -->
+    <div id="reading-progress"></div>
+
+    <!-- Back to top button -->
+    <div id="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold gradient-text">Cosmic</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Home</a>
+                    <a href="articles.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Articles</a>
+                    <a href="categories.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Categories</a>
+                    <a href="about.html" class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">About</a>
+                    <button id="theme-toggle" class="theme-toggle p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 bg-white dark:bg-slate-900 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+            <button id="close-menu" class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Home</a>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Articles</a>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Categories</a>
+            <a href="#" class="text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">About</a>
+            <button id="theme-toggle-mobile" class="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                <i class="fas fa-moon dark:hidden text-xl"></i>
+                <i class="fas fa-sun hidden dark:block text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Explore the <span class="gradient-text">Cosmos</span> of Ideas</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+                    Dive into a universe of thought-provoking articles, insightful analyses, and creative musings.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full font-medium hover:opacity-90 transition-opacity">
+                        Start Reading
+                    </button>
+                    <button class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-full font-medium hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="relative overflow-hidden rounded-xl card p-6">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-100 dark:bg-indigo-900 rounded-full opacity-20"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-pen-nib text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Thoughtful Articles</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Deep dives into topics that matter, written with care and insight.</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl card p-6">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-purple-100 dark:bg-purple-900 rounded-full opacity-20"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-lightbulb text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Fresh Perspectives</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Unique viewpoints that challenge conventional thinking.</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl card p-6">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-100 dark:bg-pink-900 rounded-full opacity-20"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-comments text-pink-600 dark:text-pink-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Engaging Community</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Join thoughtful discussions with like-minded readers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <section class="py-8 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="relative w-full md:w-auto">
+                    <input type="text" id="search-input" placeholder="Search articles..." class="search-input w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400">
+                    <button id="search-button" class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button class="category-filter px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200" data-category="all">All</button>
+                    <button class="category-filter px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-category="technology">Technology</button>
+                    <button class="category-filter px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200" data-category="environment">Environment</button>
+                    <button class="category-filter px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200" data-category="literature">Literature</button>
+                    <button class="category-filter px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200" data-category="science">Science</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Articles -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900" id="articles-section">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-3xl font-bold">Featured <span class="gradient-text">Articles</span></h2>
+                <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">View All</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="articles-container">
+                <!-- Articles will be dynamically loaded here -->
+                <article class="card rounded-xl overflow-hidden" data-category="technology">
+                    <div class="relative h-48 overflow-hidden">
+                                                <img src="https://source.unsplash.com/random/600x400/?technology" alt="Technology article" class="w-full h-full object-cover article-image">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <span class="inline-block px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">Technology</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span>May 15, 2023</span>
+                            <span class="mx-2">•</span>
+                            <span>8 min read</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">The Future of Artificial Intelligence in Everyday Life</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Exploring how AI will transform our daily routines and the ethical considerations we must address.</p>
+                        <div class="flex items-center">
+                            <img src="https://source.unsplash.com/random/40x40/?portrait" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">Sarah Johnson</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card rounded-xl overflow-hidden" data-category="environment">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/600x400/?nature" alt="Environment article" class="w-full h-full object-cover article-image">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <span class="inline-block px-3 py-1 bg-green-600 text-white text-xs font-medium rounded-full">Environment</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span>June 2, 2023</span>
+                            <span class="mx-2">•</span>
+                            <span>6 min read</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Urban Green Spaces and Their Impact on Mental Health</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">How city planners are incorporating nature into urban environments to improve wellbeing.</p>
+                        <div class="flex items-center">
+                            <img src="https://source.unsplash.com/random/40x40/?woman" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">Michael Chen</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card rounded-xl overflow-hidden" data-category="literature">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/600x400/?books" alt="Literature article" class="w-full h-full object-cover article-image">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <span class="inline-block px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full">Literature</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span>June 10, 2023</span>
+                            <span class="mx-2">•</span>
+                            <span>10 min read</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">The Resurgence of Magical Realism in Contemporary Fiction</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Examining how modern authors are blending the fantastical with the mundane to create compelling narratives.</p>
+                        <div class="flex items-center">
+                            <img src="https://source.unsplash.com/random/40x40/?man" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">Emma Rodriguez</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card rounded-xl overflow-hidden" data-category="science">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/600x400/?space" alt="Science article" class="w-full h-full object-cover article-image">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <span class="inline-block px-3 py-1 bg-yellow-600 text-white text-xs font-medium rounded-full">Science</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span>June 18, 2023</span>
+                            <span class="mx-2">•</span>
+                            <span>12 min read</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Breakthroughs in Quantum Computing: What It Means for Encryption</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Understanding the potential of quantum computers to revolutionize data security.</p>
+                        <div class="flex items-center">
+                            <img src="https://source.unsplash.com/random/40x40/?scientist" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">David Park</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card rounded-xl overflow-hidden" data-category="technology">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/600x400/?coding" alt="Technology article" class="w-full h-full object-cover article-image">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <span class="inline-block px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">Technology</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span>June 22, 2023</span>
+                            <span class="mx-2">•</span>
+                            <span>7 min read</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">The Evolution of Web Development: From HTML to WebAssembly</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Tracing the journey of web technologies and what the future holds for developers.</p>
+                        <div class="flex items-center">
+                            <img src="https://source.unsplash.com/random/40x40/?developer" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">Alex Turner</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card rounded-xl overflow-hidden" data-category="environment">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://source.unsplash.com/random/600x400/?recycling" alt="Environment article" class="w-full h-full object-cover article-image">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <span class="inline-block px-3 py-1 bg-green-600 text-white text-xs font-medium rounded-full">Environment</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span>June 25, 2023</span>
+                            <span class="mx-2">•</span>
+                            <span>9 min read</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Circular Economy: Rethinking Waste as a Resource</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">How businesses are adopting circular models to reduce environmental impact while increasing efficiency.</p>
+                        <div class="flex items-center">
+                            <img src="https://source.unsplash.com/random/40x40/?business" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">Priya Patel</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-4">Stay Updated with Cosmic</h2>
+            <p class="text-lg mb-8 opacity-90">Subscribe to our newsletter and never miss a new article or update.</p>
+            <form class="flex flex-col sm:flex-row gap-4">
+                <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/30 bg-white/10 backdrop-blur-sm placeholder-white/70">
+                <button type="submit" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">Subscribe</button>
+            </form>
+            <p class="text-sm mt-4 opacity-70">We respect your privacy. Unsubscribe at any time.</p>
+        </div>
+    </section>
+
+    <!-- Popular Tags -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-12 text-center">Popular <span class="gradient-text">Tags</span></h2>
+            <div class="tag-cloud justify-center">
+                <a href="#" class="tag">#technology</a>
+                <a href="#" class="tag">#environment</a>
+                <a href="#" class="tag">#science</a>
+                <a href="#" class="tag">#literature</a>
+                <a href="#" class="tag">#philosophy</a>
+                <a href="#" class="tag">#art</a>
+                <a href="#" class="tag">#culture</a>
+                <a href="#" class="tag">#history</a>
+                <a href="#" class="tag">#innovation</a>
+                <a href="#" class="tag">#sustainability</a>
+                <a href="#" class="tag">#psychology</a>
+                <a href="#" class="tag">#future</a>
+                <a href="#" class="tag">#creativity</a>
+                <a href="#" class="tag">#education</a>
+                <a href="#" class="tag">#health</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <a href="#" class="text-2xl font-bold gradient-text mb-4 inline-block">Cosmic</a>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Exploring ideas that shape our world and beyond.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Navigation</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Home</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Articles</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Categories</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Categories</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Technology</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Environment</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Science</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Literature</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 dark:border-slate-700 mt-12 pt-8 text-center text-gray-500 dark:text-gray-400">
+                <p>© 2023 Cosmic Blog. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        const html = document.documentElement;
+
+        // Check for saved user preference or use system preference
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        themeToggleMobile.addEventListener('click', toggleTheme);
+
+        // Mobile menu functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        // Reading progress indicator
+        const readingProgress = document.getElementById('reading-progress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+            readingProgress.style.width = scrollPercentage + '%';
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Article filtering
+        const categoryFilters = document.querySelectorAll('.category-filter');
+        const articles = document.querySelectorAll('.card');
+
+        categoryFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                // Update active filter button
+                categoryFilters.forEach(f => f.classList.remove('bg-indigo-600', 'text-white'));
+                filter.classList.add('bg-indigo-600', 'text-white');
+
+                const category = filter.dataset.category;
+                
+                articles.forEach(article => {
+                    if (category === 'all' || article.dataset.category === category) {
+                        article.style.display = 'block';
+                    } else {
+                        article.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+
+        function performSearch() {
+            const query = searchInput.value.toLowerCase();
+            
+            if (query.trim() === '') {
+                articles.forEach(article => {
+                    article.style.display = 'block';
+                });
+                return;
+            }
+
+            articles.forEach(article => {
+                const title = article.querySelector('h3').textContent.toLowerCase();
+                const excerpt = article.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(query) || excerpt.includes(query)) {
+                    article.style.display = 'block';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        }
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('visible');
+            
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Example usage of toast
+        // showToast("Welcome to Cosmic Blog!");
+    </script>
+</body>
+</html>
