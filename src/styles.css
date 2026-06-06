@@ -238,7 +238,7 @@ body {
             gap: 8px;
         }
 
-.pagination a, .pagination span {
+.pagination a, .pagination button, .pagination span {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -248,14 +248,14 @@ body {
             font-weight: 500;
         }
 
-.pagination a {
+.pagination a, .pagination button {
             background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
             transition: all 0.2s ease;
         }
 
-.pagination a:hover {
+.pagination a:hover, .pagination button:hover {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border-color: transparent;
@@ -399,4 +399,41 @@ body {
 
 button, a, input, select {
   font: inherit;
+}
+
+.article-prose {
+  color: var(--text-primary);
+  font-size: 1.075rem;
+  line-height: 1.8;
+}
+
+.article-prose p {
+  margin-bottom: 1.4rem;
+  color: var(--text-secondary);
+}
+
+.article-prose h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.article-prose h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.article-prose ul,
+.article-prose ol {
+  margin: 1rem 0 1.5rem 1.5rem;
+  color: var(--text-secondary);
+}
+
+.article-prose li {
+  margin-bottom: 0.5rem;
 }
