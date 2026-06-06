@@ -19,11 +19,11 @@ export function Navigation({
             <div className="flex items-center">
               <a
                 href={toPublicPath("/")}
-                className="flex items-center"
+                className="text-xl sm:text-2xl font-bold gradient-text whitespace-nowrap"
                 onClick={(event) => handleNavigate(event, "/", onNavigate)}
                 aria-label="Go to home"
               >
-                <img src={toPublicPath("/assets/logo.png")} alt="Thoughts & Notes Logo" className="h-8" />
+                Thoughts & Notes
               </a>
             </div>
             <div className="hidden md:flex items-center space-x-8">

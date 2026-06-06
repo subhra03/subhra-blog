@@ -37,7 +37,7 @@ export function Footer({ currentPage, onNavigate }) {
               Thoughts & Notes
             </a>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Exploring ideas that shape our world and beyond.
+              Exploring ideas that shape how we think, build, and live.
             </p>
             <div className="flex space-x-4">
               {["twitter", "instagram", "linkedin", "github"].map((icon) => (

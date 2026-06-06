@@ -37,10 +37,10 @@ export function HomePage({ onNavigate }) {
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Explore the <span className="gradient-text">Cosmos</span> of Ideas
+              Explore <span className="gradient-text">Thoughts & Notes</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-              Dive into a universe of thought-provoking articles, insightful analyses, and creative musings.
+              Read thought-provoking articles, insightful analyses, and creative notes.
             </p>
             <div className="flex justify-center space-x-4">
               <button

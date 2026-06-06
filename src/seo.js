@@ -1,15 +1,23 @@
 import { findCategoryById } from "./data/siteData.js";
-import { allTags, findPostBySlug } from "./data/posts.js";
+import {
+  articlePagePath,
+  findAuthorBySlug,
+  allTags,
+  findPostBySlug,
+  isValidArticlePage,
+  postsByAuthor,
+} from "./data/posts.js";
 import { getBasePath, parseRoute } from "./routes.js";
 
 const siteName = "Thoughts & Notes";
 const defaultDescription =
   "Explore thoughtful articles on technology, science, environment, literature, and culture.";
-const defaultImage = "/assets/logo.png";
+const defaultImage = "https://source.unsplash.com/random/1200x630/?writing,notebook";
 
 const pageTitles = {
   home: "Thoughts & Notes",
   articles: "Articles | Thoughts & Notes",
+  search: "Search Articles | Thoughts & Notes",
   categories: "Categories | Thoughts & Notes",
   about: "About | Thoughts & Notes",
   notFound: "Not Found | Thoughts & Notes",
@@ -17,7 +25,8 @@ const pageTitles = {
 
 const pageDescriptions = {
   home: defaultDescription,
-  articles: "Browse every Thoughts & Notes article, filter by category, and search by topic or author.",
+  articles: "Browse every Thoughts & Notes article and continue through the full archive.",
+  search: "Search Thoughts & Notes articles by title, author, category, tag, and article text.",
   categories: "Explore Thoughts & Notes categories across technology, science, environment, literature, and culture.",
   about: "Learn about Thoughts & Notes, the topics it covers, and the thinking behind the writing.",
   notFound: "The page you are looking for does not exist or has moved.",
@@ -60,6 +69,7 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
   const route = parseRoute(path);
   const post = route.page === "article" ? findPostBySlug(route.slug) : null;
   const category = route.page === "category" ? findCategoryById(route.categoryId) : null;
+  const author = route.page === "author" ? findAuthorBySlug(route.authorSlug) : null;
   const tagExists = route.page === "tag" ? allTags.includes(route.tag) : false;
 
   if (post) {
@@ -87,6 +97,23 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
     });
   }
 
+  if (route.page === "author" && author) {
+    const posts = postsByAuthor(author.slug);
+    const title = `${author.name} Articles | Thoughts & Notes`;
+    const description = `${author.name} has published ${posts.length} article${
+      posts.length === 1 ? "" : "s"
+    } on Thoughts & Notes.`;
+
+    return createSeo({
+      title,
+      description,
+      path: author.path,
+      image: author.avatar,
+      jsonLd: collectionJsonLd({ title, description, path: author.path, origin }),
+      origin,
+    });
+  }
+
   if (route.page === "tag" && tagExists) {
     const title = `#${route.tag} Articles | Thoughts & Notes`;
     const description = `Browse Thoughts & Notes articles tagged with #${route.tag}.`;
@@ -100,9 +127,48 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
     });
   }
 
+  if (route.page === "articles" && route.pageNumber > 1 && isValidArticlePage(route.pageNumber)) {
+    const path = articlePagePath(route.pageNumber);
+    const title = `Articles Page ${route.pageNumber} | Thoughts & Notes`;
+    const description = `Browse page ${route.pageNumber} of the Thoughts & Notes article archive.`;
+
+    return createSeo({
+      title,
+      description,
+      path,
+      jsonLd: collectionJsonLd({ title, description, path, origin }),
+      origin,
+    });
+  }
+
+  if (route.page === "search") {
+    const query = new URLSearchParams(route.search).get("q") ?? "";
+    const title = query
+      ? `Search results for "${query}" | Thoughts & Notes`
+      : pageTitles.search;
+    const description = query
+      ? `Search results for "${query}" across Thoughts & Notes articles.`
+      : pageDescriptions.search;
+
+    return createSeo({
+      title,
+      description,
+      path: query ? `/search/?q=${encodeURIComponent(query)}` : "/search/",
+      jsonLd: collectionJsonLd({
+        title,
+        description,
+        path: query ? `/search/?q=${encodeURIComponent(query)}` : "/search/",
+        origin,
+      }),
+      origin,
+    });
+  }
+
   const page =
     (route.page === "article" && !post) ||
+    (route.page === "articles" && !isValidArticlePage(route.pageNumber ?? 1)) ||
     (route.page === "category" && !category) ||
+    (route.page === "author" && !author) ||
     (route.page === "tag" && !tagExists)
       ? "notFound"
       : route.page;
@@ -115,7 +181,7 @@ export function seoForPath(path, origin = getDefaultOrigin()) {
     description,
     path,
     jsonLd:
-      page === "articles" || page === "categories"
+      page === "articles" || page === "categories" || page === "search"
         ? collectionJsonLd({ title, description, path, origin })
         : undefined,
     origin,

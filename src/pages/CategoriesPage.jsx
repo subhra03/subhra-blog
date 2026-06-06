@@ -13,7 +13,7 @@ export function CategoriesPage({ onNavigate }) {
             Explore <span className="gradient-text">Categories</span>
           </h1>
           <p className="text-xl max-w-3xl mx-auto opacity-90">
-            Dive deep into topics that matter most to you. Our categories cover the spectrum of cosmic thought.
+            Dive deep into topics that matter most to you. Browse focused collections of ideas and notes.
           </p>
         </div>
       </header>
@@ -44,7 +44,7 @@ export function CategoriesPage({ onNavigate }) {
           <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 md:p-12 text-center text-white mb-12">
             <h3 className="text-2xl font-bold mb-4">Never Miss an Article</h3>
             <p className="max-w-2xl mx-auto mb-6 opacity-90">
-              Subscribe to our newsletter and get the latest cosmic thoughts delivered straight to your inbox.
+              Subscribe to our newsletter and get the latest thoughts and notes delivered straight to your inbox.
             </p>
             <NewsletterForm compact />
           </div>

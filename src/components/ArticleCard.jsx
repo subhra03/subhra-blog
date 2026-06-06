@@ -26,7 +26,7 @@ export function ArticleCard({ article, featured = false, showReadMore = false, o
         <div className="p-6">
           <p className="text-gray-600 dark:text-gray-400 mb-4">{article.excerpt}</p>
           <div className="flex items-center justify-between">
-            <Author article={article} />
+            <Author article={article} onNavigate={onNavigate} />
             {showReadMore && <ReadMoreButton article={article} onNavigate={onNavigate} />}
           </div>
         </div>
@@ -53,7 +53,7 @@ export function ArticleCard({ article, featured = false, showReadMore = false, o
         <h3 className="text-xl font-bold mb-3">{article.title}</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-4">{article.excerpt}</p>
         <div className="flex items-center justify-between">
-          <Author article={article} />
+          <Author article={article} onNavigate={onNavigate} />
           {showReadMore && <ReadMoreButton article={article} onNavigate={onNavigate} />}
         </div>
       </div>
@@ -73,12 +73,20 @@ function ArticleMeta({ article, light = false }) {
   );
 }
 
-function Author({ article }) {
+function Author({ article, onNavigate }) {
   return (
-    <div className="flex items-center">
+    <a
+      href={toPublicPath(article.authorPath)}
+      className="flex items-center text-left hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+      onClick={(event) => {
+        if (!onNavigate) return;
+        event.preventDefault();
+        onNavigate(article.authorPath);
+      }}
+    >
       <img src={article.authorImage} alt={article.author} className="w-8 h-8 rounded-full mr-2" />
       <span className="text-sm font-medium">{article.author}</span>
-    </div>
+    </a>
   );
 }
 

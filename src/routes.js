@@ -3,6 +3,8 @@ export const routes = {
   "/index.html": "home",
   "/articles": "articles",
   "/articles.html": "articles",
+  "/search": "search",
+  "/search.html": "search",
   "/categories": "categories",
   "/categories.html": "categories",
   "/about": "about",
@@ -42,26 +44,58 @@ export function toPublicPath(path) {
 
 export function parseRoute(pathname) {
   const appPath = stripBasePath(pathname);
-  const normalized = appPath.length > 1 ? appPath.replace(/\/$/, "") : appPath;
+  const { pathname: routePath, search } = splitPathAndSearch(appPath);
+  const normalized = routePath.length > 1 ? routePath.replace(/\/$/, "") : routePath;
+  const articlePageMatch = normalized.match(/^\/articles\/page\/(\d+)$/);
   const articleMatch = normalized.match(/^\/articles\/([^/]+)$/);
   const categoryMatch = normalized.match(/^\/categories\/([^/]+)$/);
   const tagMatch = normalized.match(/^\/tags\/([^/]+)$/);
+  const authorMatch = normalized.match(/^\/authors\/([^/]+)$/);
+
+  if (articlePageMatch) {
+    return { page: "articles", pageNumber: Number(articlePageMatch[1]), search };
+  }
 
   if (articleMatch) {
-    return { page: "article", slug: decodeURIComponent(articleMatch[1]) };
+    return { page: "article", slug: decodeURIComponent(articleMatch[1]), search };
   }
 
   if (categoryMatch) {
-    return { page: "category", categoryId: decodeURIComponent(categoryMatch[1]) };
+    return { page: "category", categoryId: decodeURIComponent(categoryMatch[1]), search };
   }
 
   if (tagMatch) {
-    return { page: "tag", tag: decodeURIComponent(tagMatch[1]) };
+    return { page: "tag", tag: decodeURIComponent(tagMatch[1]), search };
   }
 
-  return { page: routes[normalized] ?? "notFound" };
+  if (authorMatch) {
+    return { page: "author", authorSlug: decodeURIComponent(authorMatch[1]), search };
+  }
+
+  return { page: routes[normalized] ?? "notFound", search };
 }
 
 export function resolvePage(pathname) {
   return parseRoute(pathname).page;
+}
+
+export function getQueryParam(pathname, key) {
+  const { search } = splitPathAndSearch(stripBasePath(pathname));
+  return new URLSearchParams(search).get(key) ?? "";
+}
+
+function splitPathAndSearch(value) {
+  const text = value || "/";
+  const hashIndex = text.indexOf("#");
+  const withoutHash = hashIndex >= 0 ? text.slice(0, hashIndex) : text;
+  const searchIndex = withoutHash.indexOf("?");
+
+  if (searchIndex < 0) {
+    return { pathname: withoutHash || "/", search: "" };
+  }
+
+  return {
+    pathname: withoutHash.slice(0, searchIndex) || "/",
+    search: withoutHash.slice(searchIndex),
+  };
 }

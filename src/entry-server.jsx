@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server";
 import App from "./App.jsx";
-import { posts, allTags } from "./data/posts.js";
+import { articlePageCount, articlePagePath, authors, posts, allTags } from "./data/posts.js";
 import { categories } from "./data/siteData.js";
 import { seoForPath } from "./seo.js";
 
@@ -15,9 +15,12 @@ export function getPrerenderRoutes() {
   return uniqueRoutes([
     "/",
     "/articles/",
+    ...Array.from({ length: articlePageCount - 1 }, (_, index) => articlePagePath(index + 2)),
+    "/search/",
     "/categories/",
     "/about/",
     ...posts.map((post) => post.path),
+    ...authors.map((author) => author.path),
     ...categories.map((category) => `/categories/${category.id}/`),
     ...allTags.map((tag) => `/tags/${encodeURIComponent(tag)}/`),
   ]);

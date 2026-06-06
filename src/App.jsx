@@ -4,20 +4,30 @@ import { Footer } from "./components/Footer.jsx";
 import { Navigation } from "./components/Navigation.jsx";
 import { ReadingProgress } from "./components/ReadingProgress.jsx";
 import { AboutPage } from "./pages/AboutPage.jsx";
+import { AuthorPage } from "./pages/AuthorPage.jsx";
 import { ArticlesPage } from "./pages/ArticlesPage.jsx";
 import { CategoriesPage } from "./pages/CategoriesPage.jsx";
 import { HomePage } from "./pages/HomePage.jsx";
 import { ArticlePage } from "./pages/ArticlePage.jsx";
 import { NotFoundPage } from "./pages/NotFoundPage.jsx";
 import { findCategoryById } from "./data/siteData.js";
-import { allTags, findPostBySlug, postsByCategory, postsByTag } from "./data/posts.js";
+import {
+  allTags,
+  findAuthorBySlug,
+  findPostBySlug,
+  isValidArticlePage,
+  postsByAuthor,
+  postsByCategory,
+  postsByTag,
+} from "./data/posts.js";
 import { CategoryPostsPage, TagPostsPage } from "./pages/PostListPage.jsx";
+import { SearchPage } from "./pages/SearchPage.jsx";
 import { parseRoute, stripBasePath, toPublicPath } from "./routes.js";
 import { applySeo, seoForPath } from "./seo.js";
 
 function currentPath() {
   if (typeof window === "undefined") return "/";
-  return stripBasePath(window.location.pathname || "/");
+  return stripBasePath(`${window.location.pathname || "/"}${window.location.search || ""}`);
 }
 
 function App({ initialPath }) {
@@ -34,10 +44,13 @@ function App({ initialPath }) {
   const route = parseRoute(path);
   const post = route.page === "article" ? findPostBySlug(route.slug) : null;
   const category = route.page === "category" ? findCategoryById(route.categoryId) : null;
+  const author = route.page === "author" ? findAuthorBySlug(route.authorSlug) : null;
   const tagExists = route.page === "tag" ? allTags.includes(route.tag) : false;
-  const page = resolveValidPage(route, { post, category, tagExists });
-  const activePage = ["article", "tag"].includes(page)
+  const page = resolveValidPage(route, { post, category, author, tagExists });
+  const activePage = ["article", "tag", "author"].includes(page)
     ? "articles"
+    : page === "search"
+      ? "search"
     : page === "category"
       ? "categories"
       : page;
@@ -86,6 +99,10 @@ function App({ initialPath }) {
         page={page}
         post={post}
         categoryId={route.categoryId}
+        author={author}
+        authorSlug={route.authorSlug}
+        pageNumber={route.pageNumber}
+        search={route.search}
         tag={route.tag}
         onNavigate={navigate}
       />
@@ -94,12 +111,14 @@ function App({ initialPath }) {
   );
 }
 
-function CurrentPage({ page, post, categoryId, tag, onNavigate }) {
+function CurrentPage({ page, post, categoryId, author, authorSlug, pageNumber, search, tag, onNavigate }) {
   switch (page) {
     case "article":
       return <ArticlePage post={post} onNavigate={onNavigate} />;
     case "articles":
-      return <ArticlesPage onNavigate={onNavigate} />;
+      return <ArticlesPage pageNumber={pageNumber ?? 1} onNavigate={onNavigate} />;
+    case "search":
+      return <SearchPage search={search} onNavigate={onNavigate} />;
     case "categories":
       return <CategoriesPage onNavigate={onNavigate} />;
     case "category":
@@ -112,6 +131,14 @@ function CurrentPage({ page, post, categoryId, tag, onNavigate }) {
       );
     case "tag":
       return <TagPostsPage tag={tag} posts={postsByTag(tag)} onNavigate={onNavigate} />;
+    case "author":
+      return (
+        <AuthorPage
+          author={author}
+          posts={postsByAuthor(authorSlug)}
+          onNavigate={onNavigate}
+        />
+      );
     case "about":
       return <AboutPage />;
     case "notFound":
@@ -121,9 +148,11 @@ function CurrentPage({ page, post, categoryId, tag, onNavigate }) {
   }
 }
 
-function resolveValidPage(route, { post, category, tagExists }) {
+function resolveValidPage(route, { post, category, author, tagExists }) {
+  if (route.page === "articles" && !isValidArticlePage(route.pageNumber ?? 1)) return "notFound";
   if (route.page === "article" && !post) return "notFound";
   if (route.page === "category" && !category) return "notFound";
+  if (route.page === "author" && !author) return "notFound";
   if (route.page === "tag" && !tagExists) return "notFound";
   return route.page;
 }
